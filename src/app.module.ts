@@ -34,6 +34,8 @@ import { DatabaseFilesModule } from './databaseFiles/databaseFiles.module';
 import { LocalFilesModule } from './localFiles/localFiles.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TodosearchModule } from './todosearch/todosearch.module';
+import { HealthModule } from './health/health.module';
+import { PrometheusModule } from './prometheus/prometheus.module';
 
 @Module({
   imports: [
@@ -130,7 +132,8 @@ import { TodosearchModule } from './todosearch/todosearch.module';
     HealthModule,
     DatabaseFilesModule,
     LocalFilesModule,
-    TodosearchModule
+    TodosearchModule,
+    PrometheusModule
   ],
   controllers: [],
   providers: [Timestamp],
