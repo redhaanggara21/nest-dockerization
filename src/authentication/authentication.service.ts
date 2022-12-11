@@ -22,6 +22,7 @@ export class AuthenticationService {
         ...registrationData,
         password: hashedPassword,
         isEmailConfirmed: true,
+        username: ''
       });
       createdUser.password = undefined;
       return createdUser;

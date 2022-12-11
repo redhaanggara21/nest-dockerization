@@ -2,12 +2,12 @@ version: "3.8"
 services:
   api:
     build:
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
       context: .
-      target: development
+      # target: development
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - .:/app
+      - /app/node_modules
     # command: npm run start:dev
     depends_on: 
       - postgres
@@ -91,7 +91,7 @@ services:
       - bootstrap.memory_lock:true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - ELASTICSEARCH_PASSWORD:admin
-    mem_limit: 2000
+    # mem_limit: 2000
     ulimits:
       memlock:
         soft: -1
@@ -121,7 +121,7 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    mem_limit: 2000
+    # mem_limit: 2000
     ulimits:
       memlock:
         soft: -1
@@ -149,7 +149,7 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    mem_limit: 2000
+    # mem_limit: 2000
     ulimits:
       memlock:
         soft: -1
@@ -179,9 +179,9 @@ services:
       - es02
       - es03
     links: 
-      - es01:es01
-      - es02:es02
-      - es03:es03
+      - es01
+      - es02
+      - es03
     networks:
       - postgres
 volumes:

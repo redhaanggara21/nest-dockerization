@@ -33,7 +33,7 @@ import HealthModule from './health/health.module';
 import { DatabaseFilesModule } from './databaseFiles/databaseFiles.module';
 import { LocalFilesModule } from './localFiles/localFiles.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { ElasticSearchModule } from './elasticsearch/elasticsearch.module';
+import { TodosearchModule } from './todosearch/todosearch.module';
 
 @Module({
   imports: [
@@ -130,7 +130,7 @@ import { ElasticSearchModule } from './elasticsearch/elasticsearch.module';
     HealthModule,
     DatabaseFilesModule,
     LocalFilesModule,
-    ElasticSearchModule
+    TodosearchModule
   ],
   controllers: [],
   providers: [Timestamp],
