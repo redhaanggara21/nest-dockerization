@@ -197,7 +197,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: monitoring_grafana
+    container_name: grafana_container
     restart: unless-stopped
     links:
       - prometheus:prometheus
@@ -206,7 +206,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=12345
     ports:
-      - '3000:3000'
+      - '3333:3333'
     networks:
       - postgres
 volumes:
