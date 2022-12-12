@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePrometheusDto } from './dto/create-prometheus.dto';
-import { UpdatePrometheusDto } from './dto/update-prometheus.dto';
 import { Registry, collectDefaultMetrics, Histogram, Gauge } from 'prom-client';
 
 export type PrometheusHistogram = Histogram<string>;
@@ -15,7 +13,6 @@ interface MapGauge {
 
 @Injectable()
 export class PrometheusService {
-
   private readonly serviceTitle = 'Backend-For-Frontend';
   private readonly servicePrefix = 'FrontendMetrics_';
   private registeredMetrics: MapHistogram = {};
@@ -33,7 +30,6 @@ export class PrometheusService {
     });
     collectDefaultMetrics({ register: this.registry, prefix: this.servicePrefix });
   }
-
 
   public registerMetrics(
     name: string,
