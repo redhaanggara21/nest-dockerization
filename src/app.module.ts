@@ -29,11 +29,11 @@ import { SmsModule } from './sms/sms.module';
 import { GoogleAuthenticationModule } from './googleAuthentication/googleAuthentication.module';
 import LogsMiddleware from './utils/logs.middleware';
 import { LoggerModule } from './logger/logger.module';
-import HealthModule from './health/health.module';
 import { DatabaseFilesModule } from './databaseFiles/databaseFiles.module';
 import { LocalFilesModule } from './localFiles/localFiles.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TodosearchModule } from './todosearch/todosearch.module';
+import { MonitorizationModule } from './monitorization/monitorization.module';
 
 @Module({
   imports: [
@@ -127,10 +127,10 @@ import { TodosearchModule } from './todosearch/todosearch.module';
     SmsModule,
     GoogleAuthenticationModule,
     LoggerModule,
-    HealthModule,
     DatabaseFilesModule,
     LocalFilesModule,
-    TodosearchModule
+    TodosearchModule,
+    MonitorizationModule
   ],
   controllers: [],
   providers: [Timestamp],
