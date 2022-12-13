@@ -2,19 +2,23 @@ version: "3.8"
 services:
   api:
     build:
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
       context: .
-      target: development
+      # target: development
     volumes:
-      - .:/usr/src/app
-    command: npm run start:dev
+      - .:/app
+      - /app/node_modules
+    # command: npm run start:dev
     depends_on: 
       - postgres
       - redis
+      - es01
     env_file:
       - .env
     ports:
       - 3000:3000
+    networks:
+      - postgres
   postgres:
     container_name: postgres_container
     image: postgres:latest
@@ -22,6 +26,7 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+      - ./pgfile:/tmp
     env_file:
       - docker.env
     networks:
@@ -45,6 +50,8 @@ services:
     env_file:
       - docker.env
     restart: unless-stopped
+    depends_on: 
+      - postgres
     networks:
       - postgres
 
@@ -77,20 +84,31 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es01
     environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es02,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
+      - node.name:es01
+      - cluster.name:es-docker-cluster
+      - discovery.seed_hosts:es02,es03
+      - cluster.initial_master_nodes:es01,es02,es03
+      - bootstrap.memory_lock:true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTICSEARCH_PASSWORD:admin
+    # mem_limit: 2000
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - data01:/usr/share/elasticsearch/data
+      - ./data01:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
     networks:
       - elastic
   es02:
@@ -103,12 +121,22 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    # mem_limit: 2000
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - data02:/usr/share/elasticsearch/data
+      - ./data02:/usr/share/elasticsearch/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
     networks:
       - elastic
   es03:
@@ -121,15 +149,41 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    # mem_limit: 2000
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - data03:/usr/share/elasticsearch/data
+      - ./data03:/usr/share/elasticsearch/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
     networks:
       - elastic
-
+  kib01:
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    container_name: kib01
+    ports: 
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=http://esOne:9200
+    depends_on: 
+      - es01
+      - es02
+      - es03
+    links: 
+      - es01
+      - es02
+      - es03
+    networks:
+      - postgres
 volumes:
   data01:
     driver: local
@@ -137,9 +191,9 @@ volumes:
     driver: local
   data03:
     driver: local
-  # postgres:
   postgres-data:
   pgadmin-data:
+
   redis:
     driver: local
 

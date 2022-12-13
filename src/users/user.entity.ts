@@ -10,6 +10,7 @@ import { Exclude } from 'class-transformer';
 import Address from './address.entity';
 import Post from '../posts/post.entity';
 import LocalFile from '../localFiles/localFile.entity';
+import { Todo } from 'src/todosearch/entities/todosearch.entity';
 
 @Entity()
 class User {
@@ -24,6 +25,9 @@ class User {
 
   @Column()
   public name: string;
+
+  @Column()
+  public username: string;
 
   @Column({ nullable: true })
   @Exclude()
@@ -59,6 +63,9 @@ class User {
   })
   @Exclude()
   public currentHashedRefreshToken?: string;
+
+  @OneToMany(type => Todo, todo => todo.user, { eager: true })
+  todo: Todo[]
 
   @Column({ nullable: true })
   public twoFactorAuthenticationSecret?: string;
