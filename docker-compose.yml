@@ -86,13 +86,13 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es01
     environment:
-      - node.name:es01
-      - cluster.name:es-docker-cluster
-      - discovery.seed_hosts:es02,es03
-      - cluster.initial_master_nodes:es01,es02,es03
-      - bootstrap.memory_lock:true
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTICSEARCH_PASSWORD:admin
+      - ELASTICSEARCH_PASSWORD=admin
     # mem_limit: 2000
     ulimits:
       memlock:
@@ -206,10 +206,10 @@ services:
     volumes:
       - ./data/grafana:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=12345
-      - GF_RENDERING_SERVER_URL=http://renderer:8081/render
-      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
-      - GF_LOG_FILTERS=rendering:debug
+      GF_SECURITY_ADMIN_PASSWORD: 12345
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:debug
     ports:
       - 3000:3000
     expose:
@@ -236,7 +236,7 @@ services:
     hostname: fluentd
     build:
       context: ./fluent-bit
-      dockerfile: Dockerfile
+      dockerfile: ./fluent-bit/Dockerfile
     container_name: fluent-bit
     environment:
       - LOKI_URL=http://loki:3100/loki/api/v1/push
@@ -259,6 +259,21 @@ services:
       options:
         fluentd-address: host.docker.internal:24224
         tag: loki
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: on-failure
+    hostname: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: master123
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - postgres
 volumes:
   data01:
     driver: local
@@ -268,6 +283,8 @@ volumes:
     driver: local
   postgres-data:
   pgadmin-data:
+  mongo_data:
+    driver: local
 
   redis:
     driver: local
